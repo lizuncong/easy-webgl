@@ -16,9 +16,9 @@ let fragmentSource = `
     }
 `;
 
-initShaders(gl, vertexSource, fragmentSource);
+const program = initShaders(gl, vertexSource, fragmentSource);
 
-console.log("program...", gl.__program);
+console.log("program...", program);
 // 清空canvas画布
 gl.clearColor(0.5, 0.5, 0.5, 1.0); // rgba()
 gl.clear(gl.COLOR_BUFFER_BIT);
