@@ -6,3 +6,4 @@
 - [https://www.lmlphp.com/s/webgl/](https://www.lmlphp.com/s/webgl/)
 - [https://webglfundamentals.org/webgl/lessons/resources/webgl-state-diagram.html](https://webglfundamentals.org/webgl/lessons/resources/webgl-state-diagram.html)。牛啊
 - [https://stackoverflow.com/questions/28604747/understanding-webgl-state](https://stackoverflow.com/questions/28604747/understanding-webgl-state)。太强了吧
+- [https://chromium.googlesource.com/chromium/blink/+/refs/heads/main/Source/modules/webgl/WebGLRenderingContextBase.cpp#1585](https://chromium.googlesource.com/chromium/blink/+/refs/heads/main/Source/modules/webgl/WebGLRenderingContextBase.cpp#1585)。webgl 底层实现
