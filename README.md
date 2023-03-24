@@ -5,3 +5,4 @@
 - [https://www.lmlphp.com/user/152530/article/item/4117917/](https://www.lmlphp.com/user/152530/article/item/4117917/)。优先看这个
 - [https://www.lmlphp.com/s/webgl/](https://www.lmlphp.com/s/webgl/)
 - [https://webglfundamentals.org/webgl/lessons/resources/webgl-state-diagram.html](https://webglfundamentals.org/webgl/lessons/resources/webgl-state-diagram.html)。牛啊
+- [https://stackoverflow.com/questions/28604747/understanding-webgl-state](https://stackoverflow.com/questions/28604747/understanding-webgl-state)。太强了吧
