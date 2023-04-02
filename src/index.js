@@ -3,8 +3,9 @@ const canvas = document.getElementById("webgl");
 const gl = canvas.getContext("webgl");
 
 const VSHADER_SOURCE = `
+    attribute vec4 a_Position;
     void main() {
-        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        gl_Position = a_Position;
         gl_PointSize = 10.0;
     }
 `;
@@ -34,7 +35,8 @@ const initShaders = (gl, vsource, fsource) => {
 };
 
 initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
-
+const a_Position = gl.getAttribLocation(gl.program, 'a_Position')
+gl.vertexAttrib3f(a_Position, 0.5, 0.0, 0.0)
 gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
