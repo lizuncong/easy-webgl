@@ -4,18 +4,16 @@ const gl = canvas.getContext("webgl");
 
 const VSHADER_SOURCE = `
     attribute vec4 a_Position;
-    attribute float a_Size;
     void main() {
         gl_Position = a_Position;
-        gl_PointSize = a_Size;
+        gl_PointSize = 10.0;
     }
 `;
 
 const FSHADER_SOURCE = `
     precision mediump float;
-    uniform vec4 u_FragColor;
     void main(){
-        gl_FragColor = u_FragColor;
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
 `;
 
@@ -38,43 +36,34 @@ const initShaders = (gl, vsource, fsource) => {
 };
 
 initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
-const a_Position = gl.getAttribLocation(gl.program, "a_Position");
-const a_Size = gl.getAttribLocation(gl.program, "a_Size");
-const u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
-
-console.log("u_FragColor===", u_FragColor);
-
-const g_points = [];
-const g_colors = [];
-canvas.onclick = (ev) => {
-  let x = ev.clientX;
-  let y = ev.clientY;
-  const rect = ev.target.getBoundingClientRect();
-  x = (x - rect.left - canvas.height / 2) / (canvas.height / 2);
-  y = (canvas.width / 2 - (y - rect.top)) / (canvas.width / 2);
-  g_points.push([x, y]);
-
-  if(x >= 0.0 && y >= 0.0){
-    g_colors.push([1.0, 0.0, 0.0, 1.0])
-  } else if(x < 0.0 && y < 0.0){
-    g_colors.push([0.0, 1.0, 0.0, 1.0])
-  } else {
-    g_colors.push([1.0, 1.0, 1.0, 1.0])
-  }
 
 
-  gl.clear(gl.COLOR_BUFFER_BIT);
+const initVertexBuffers = (gl) => {
+  const vertices = new Float32Array([
+    0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+  ])
 
-  for (let i = 0; i < g_points.length; i ++) {
-    const xy = g_points[i]
-    const rgba = g_colors[i]
-    gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3])
-    gl.vertexAttrib3f(a_Position, xy[0], xy[1], 0.0);
-    gl.drawArrays(gl.POINTS, 0, 1);
-  }
-};
+  const n = 3;
 
-gl.vertexAttrib1f(a_Size, 10.0);
+  const vertexBuffer = gl.createBuffer();
 
-gl.clearColor(0, 0, 0, 1);
-gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+
+  const a_Position = gl.getAttribLocation(gl.program, "a_Position");
+
+  gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0)
+  gl.enableVertexAttribArray(a_Position)
+
+  return n
+}
+
+
+
+const n = initVertexBuffers(gl)
+
+gl.clearColor(0.0, 0.0, 0.0, 1.0)
+gl.clear(gl.COLOR_BUFFER_BIT)
+
+gl.drawArrays(gl.POINTS, 0, n)
+
