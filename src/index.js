@@ -5,24 +5,17 @@ const gl = canvas.getContext("webgl");
 const VSHADER_SOURCE = `
     attribute vec4 a_Position;
     attribute float a_Size;
-    attribute float a_Size1;
-    attribute float a_Size2;
-    attribute float a_Size3;
-    attribute float a_Size4;
-    attribute float a_Size5;
-    attribute float a_Size6;
-    attribute float a_Size7;
-    attribute float a_Size8;
-    attribute float a_Size9;
     void main() {
         gl_Position = a_Position;
-        gl_PointSize = a_Size + a_Size1 + a_Size2 + a_Size3 + a_Size4 + a_Size5 + a_Size6 + a_Size7 + a_Size8 + a_Size9;
+        gl_PointSize = a_Size;
     }
 `;
 
 const FSHADER_SOURCE = `
+    precision mediump float;
+    uniform vec4 u_FragColor;
     void main(){
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        gl_FragColor = u_FragColor;
     }
 `;
 
@@ -31,46 +24,57 @@ const initShaders = (gl, vsource, fsource) => {
   gl.shaderSource(vertexShader, vsource);
   gl.compileShader(vertexShader);
 
-  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
-  gl.shaderSource(fragmentShader, fsource)
-  gl.compileShader(fragmentShader)
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragmentShader, fsource);
+  gl.compileShader(fragmentShader);
 
   const program = gl.createProgram();
-  gl.attachShader(program, vertexShader)
-  gl.attachShader(program,fragmentShader)
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
 
-  gl.linkProgram(program)
-  gl.useProgram(program)
-  gl.program = program
+  gl.linkProgram(program);
+  gl.useProgram(program);
+  gl.program = program;
 };
 
 initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
-const a_Position = gl.getAttribLocation(gl.program, 'a_Position')
-const a_Size = gl.getAttribLocation(gl.program, 'a_Size')
-const a_Size1 = gl.getAttribLocation(gl.program, 'a_Size1')
-const a_Size2 = gl.getAttribLocation(gl.program, 'a_Size2')
-const a_Size3 = gl.getAttribLocation(gl.program, 'a_Size3')
-const a_Size4 = gl.getAttribLocation(gl.program, 'a_Size4')
-const a_Size5 = gl.getAttribLocation(gl.program, 'a_Size5')
-const a_Size6 = gl.getAttribLocation(gl.program, 'a_Size6')
-const a_Size7 = gl.getAttribLocation(gl.program, 'a_Size7')
-const a_Size8 = gl.getAttribLocation(gl.program, 'a_Size8')
-const a_Size9 = gl.getAttribLocation(gl.program, 'a_Size9')
+const a_Position = gl.getAttribLocation(gl.program, "a_Position");
+const a_Size = gl.getAttribLocation(gl.program, "a_Size");
+const u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
 
-console.log('a_Position....', a_Position, a_Size9)
-gl.vertexAttrib3f(a_Position, 0.5, 0.0, 0.0)
-gl.vertexAttrib1f(a_Size, 10.0)
-gl.vertexAttrib1f(a_Size1, 1.0)
-gl.vertexAttrib1f(a_Size2, 1.0)
-gl.vertexAttrib1f(a_Size3, 1.0)
-gl.vertexAttrib1f(a_Size4, 1.0)
-gl.vertexAttrib1f(a_Size5, 1.0)
-gl.vertexAttrib1f(a_Size6, 1.0)
-gl.vertexAttrib1f(a_Size7, 1.0)
-gl.vertexAttrib1f(a_Size8, 1.0)
-gl.vertexAttrib1f(a_Size9, 1.0)
+console.log("u_FragColor===", u_FragColor);
+
+const g_points = [];
+const g_colors = [];
+canvas.onclick = (ev) => {
+  let x = ev.clientX;
+  let y = ev.clientY;
+  const rect = ev.target.getBoundingClientRect();
+  x = (x - rect.left - canvas.height / 2) / (canvas.height / 2);
+  y = (canvas.width / 2 - (y - rect.top)) / (canvas.width / 2);
+  g_points.push([x, y]);
+
+  if(x >= 0.0 && y >= 0.0){
+    g_colors.push([1.0, 0.0, 0.0, 1.0])
+  } else if(x < 0.0 && y < 0.0){
+    g_colors.push([0.0, 1.0, 0.0, 1.0])
+  } else {
+    g_colors.push([1.0, 1.0, 1.0, 1.0])
+  }
+
+
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  for (let i = 0; i < g_points.length; i ++) {
+    const xy = g_points[i]
+    const rgba = g_colors[i]
+    gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3])
+    gl.vertexAttrib3f(a_Position, xy[0], xy[1], 0.0);
+    gl.drawArrays(gl.POINTS, 0, 1);
+  }
+};
+
+gl.vertexAttrib1f(a_Size, 10.0);
 
 gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
-
-gl.drawArrays(gl.POINTS, 0, 1);
