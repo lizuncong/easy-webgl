@@ -40,10 +40,10 @@ initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
 
 const initVertexBuffers = (gl) => {
   const vertices = new Float32Array([
-    0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+    -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5
   ])
 
-  const n = 3;
+  const n = 4;
 
   const vertexBuffer = gl.createBuffer();
 
@@ -64,6 +64,6 @@ const n = initVertexBuffers(gl)
 
 gl.clearColor(0.0, 0.0, 0.0, 1.0)
 gl.clear(gl.COLOR_BUFFER_BIT)
-
-gl.drawArrays(gl.POINTS, 0, n)
+console.log('gl.TRIANGLES_STRIP==', gl.TRIANGLES_STRIP)
+gl.drawArrays(gl.TRIANGLE_STRIP, 0, n)
 
