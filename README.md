@@ -11,3 +11,5 @@
 - [https://chromium.googlesource.com/chromium/blink/+/refs/heads/main/Source/modules/webgl/WebGLRenderingContextBase.cpp#1585](https://chromium.googlesource.com/chromium/blink/+/refs/heads/main/Source/modules/webgl/WebGLRenderingContextBase.cpp#1585)。webgl 底层实现
 
 - [https://source.chromium.org/](https://source.chromium.org/)。chrome 源码
+
+- [https://thebookofshaders.com/](https://thebookofshaders.com/)
