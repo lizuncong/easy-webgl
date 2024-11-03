@@ -39,3 +39,19 @@ WebGL在GPU上的工作基本上分为两部分，第一部分是将顶点（或
 
 ### Varyings可变量
 可变量是一种顶点着色器给片段着色器传值的方式。为了使用可变量，要在两个着色器中定义同名的可变量。 给顶点着色器中可变量设置的值，会作为参考值进行内插，在绘制像素时传给片段着色器的可变量。
+
+## gl.vertexAttribPointer
+一个隐藏信息是gl.vertexAttribPointer是将属性绑定到当前的ARRAY_BUFFER。 换句话说就是属性绑定到了positionBuffer上。这也意味着现在利用绑定点随意将 
+ARRAY_BUFFER绑定到其它数据上后，该属性依然从positionBuffer上读取数据。
+```javascript
+gl.vertexAttribPointer(
+    positionAttributeLocation, size, type, normalize, stride, offset)
+```
+
+
+## attributes
+在整个webgl中，顶点着色器的属性都是存在全局的vertex array中，这个数组能存放的属性数量可以通过`gl.getParameter(gl.MAX_VERTEX_ATTRIBS)`获取。
+
+
+
+[image](../../../imgs/vertex.jpg)
