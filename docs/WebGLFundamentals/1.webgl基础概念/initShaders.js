@@ -45,7 +45,7 @@ export default function initShaders(gl, vertexSource, fragmentSource) {
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
   const program = createProgram(gl, vertexShader, fragmentShader);
   if (program) {
-    gl.useProgram(program);
+    // gl.useProgram(program);
     return program;
   } else {
     console.log("Failed to create program.");

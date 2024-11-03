@@ -14,9 +14,9 @@ WebGL在GPU中运行，因此需要使用能够在GPU上运行的program（着�
 这些方法对所需的任何数据都需要发送到GPU，这里有着色器获取数据的4种方法：
 
 - 属性（Attributes）和缓冲。属性用来指明怎么从缓冲中获取所需数据并将它提供给顶点着色器。（属性只用于顶点着色器吗？）
-- 全局变量（Uniforms）
+- 全局变量（Uniforms）。既可以用于顶点着色器，也可以用于片段着色器
 - 纹理（Textures）
-- 可变量（Varyings）
+- 可变量（Varyings）。用于顶点着色器向片段着色器传值，顶点着色器中设置的可变量会在片段着色器运行中获取不同的插值。
 
 >上面4种方法，哪些是只能用于顶点着色器，哪些是只能用于片元着色器？哪些是两个都可以使用？
 
@@ -30,3 +30,22 @@ WebGL可以通过绑定点操控全局范围内的许多数据，你可以把绑
 
 
 gl.STATIC_DRAW是提示WebGL我们将怎么使用这些数据。WebGL会根据提示做出一些优化。 gl.STATIC_DRAW提示WebGL我们不会经常改变这些数据。
+
+
+```javascript
+var primitiveType = gl.TRIANGLES;
+var offset = 0;
+var count = 3; // 顶点着色器将会运行三次。
+gl.drawArrays(primitiveType, offset, count);
+```
+
+顶点着色器将会运行三次，绘制每个像素时WebGL都将调用我们的片段着色器。
+
+>所以顶点着色器运行的次数和顶点数量一一对应，而片段着色器运行的次数和像素数量一一对应
+
+
+
+Webgl做的是一件简单的事，它仅仅运行用户提供的两个方法，一个顶点着色器和一个片段着色器， 去绘制点，线和三角形。WebGL API只做光栅化处理并且在概念上十分容易理解。
+
+
+wegbl调试工具[点击这里](https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-setup-and-installation.html)
