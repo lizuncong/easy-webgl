@@ -7,17 +7,16 @@ const gl = canvas.getContext("webgl");
 let vertexSource = `
   // 一个属性变量，将会从缓冲中获取数据
   attribute vec2 a_position;
-  attribute float a_position2;
-  attribute vec4 a_color;
+  attribute vec2 a_texCoord;
+  varying vec2 v_texCoord;
   uniform vec2 u_resolution;
-  varying vec4 v_color;
   // 所有着色器都有一个main方法
   void main() {
     // 从像素坐标转换到 0.0 到 1.0
     vec2 zeroToOne = a_position/ u_resolution;
 
     // 再把 0 -> 1 转换 0 -> 2
-    vec2 zeroToTwo = zeroToOne * a_position2;
+    vec2 zeroToTwo = zeroToOne * 2.0;
 
     // 把0 -> 2转换到-1 -> +1(裁剪空间)
     vec2 clipSpace = zeroToTwo - 1.0;
@@ -25,8 +24,8 @@ let vertexSource = `
     gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
     
 
-    // 直接把属性值中的数据赋给可变量
-    v_color = a_color;
+    // 将纹理坐标传给片段着色器，GPU会在点之间进行插值
+    v_texCoord = a_texCoord;
 
   }
 `;
@@ -35,42 +34,63 @@ let fragmentSource = `
   // 片段着色器没有默认精度，所以我们需要设置一个精度
   // mediump是一个不错的默认值，代表“medium precision”（中等精度）
   precision mediump float;
-  varying vec4 v_color;
+  // 纹理
+  uniform sampler2D u_image;
+  // 从顶点着色器传入的纹理坐标
+  varying vec2 v_texCoord;
   void main() {
-    // gl_FragColor是一个片段着色器主要设置的变量
-    gl_FragColor = v_color;
+    // 在纹理上寻找对应颜色值
+    gl_FragColor = texture2D(u_image, v_texCoord);
   }
 `;
 
 const program = initShaders(gl, vertexSource, fragmentSource);
 
-var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-var positionAttributeLocation2 = gl.getAttribLocation(program, "a_position2");
-var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-var colorLocation = gl.getAttribLocation(program, "a_color");
-// attribute的赋值不需要在useProgram之后
-gl.vertexAttrib1f(positionAttributeLocation2, 2.0)
-// unifrom的赋值需要在useProgram之后，下面的赋值会出错
-// gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+const drawScene = (image) => {
 
-console.log("program...", gl.getParameter(gl.MAX_VERTEX_ATTRIBS), colorLocation, positionAttributeLocation2, positionAttributeLocation, resolutionUniformLocation);
+  var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+  var texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
+  var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
 
-var positionBuffer = gl.createBuffer();
-// 可以看成ARRAY_BUFFER = positionBuffer
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  console.log("program...", gl.getParameter(gl.MAX_VERTEX_ATTRIBS), positionAttributeLocation, resolutionUniformLocation);
 
-setGeometry(gl)
+  var positionBuffer = gl.createBuffer();
+  // 可以看成ARRAY_BUFFER = positionBuffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-var colorBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-// Set the colors.
-setColors(gl);
+  // Set a rectangle the same size as the image.
+  setRectangle(gl, 0, 0, image.width, image.height);
 
-/**************************在此之上的代码是 初始化代码。这些代码在页面加载时只会运行一次***********************************************/
-/**************************接下来的代码是渲染代码，而这些代码将在我们每次要渲染或者绘制时执行***********************************************/
+  // provide texture coordinates for the rectangle.
+  var texcoordBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    0.0, 0.0,
+    1.0, 0.0,
+    0.0, 1.0,
+    0.0, 1.0,
+    1.0, 0.0,
+    1.0, 1.0,
+  ]), gl.STATIC_DRAW);
 
 
-const drawScene = () => {
+  // Create a texture.
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Set the parameters so we can render any size image.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // Upload the image into the texture.
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+  /**************************在此之上的代码是 初始化代码。这些代码在页面加载时只会运行一次***********************************************/
+  /**************************接下来的代码是渲染代码，而这些代码将在我们每次要渲染或者绘制时执行***********************************************/
+
+
   resize(gl.canvas)
   // 告诉WebGL裁剪空间的 -1 -> +1 分别对应到x轴的 0 -> gl.canvas.width 
   // y轴的 0 -> gl.canvas.height
@@ -102,19 +122,20 @@ const drawScene = () => {
 
 
   // Turn on the color attribute
-  gl.enableVertexAttribArray(colorLocation);
+  gl.enableVertexAttribArray(texcoordLocation);
 
   // Bind the color buffer.
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 
-  // Tell the color attribute how to get data out of colorBuffer (ARRAY_BUFFER)
-  var size = 4;          // 4 components per iteration
+
+  // Tell the texcoord attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
+  var size = 2;          // 2 components per iteration
   var type = gl.FLOAT;   // the data is 32bit floats
   var normalize = false; // don't normalize the data
   var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
   var offset = 0;        // start at the beginning of the buffer
   gl.vertexAttribPointer(
-    colorLocation, size, type, normalize, stride, offset);
+    texcoordLocation, size, type, normalize, stride, offset);
 
 
   gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
@@ -122,34 +143,31 @@ const drawScene = () => {
   // Draw the geometry.
   var primitiveType = gl.TRIANGLES;
   var offset = 0;
-  var count = 3;
+  var count = 6;
   gl.drawArrays(primitiveType, offset, count);
 }
 
 
-drawScene()
 
-
-function setColors(gl) {
-  // Make every vertex a different color.
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array(
-      [Math.random(), Math.random(), Math.random(), 1,
-      Math.random(), Math.random(), Math.random(), 1,
-      Math.random(), Math.random(), Math.random(), 1,
-      Math.random(), Math.random(), Math.random(), 1,
-      Math.random(), Math.random(), Math.random(), 1,
-      Math.random(), Math.random(), Math.random(), 1]),
-    gl.STATIC_DRAW);
+function main() {
+  var image = new Image();
+  image.src = "./leaves.jpg";
+  image.onload = function () {
+    drawScene(image);
+  };
 }
-// 定义一个三角形填充到缓冲里
-function setGeometry(gl) {
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-      0, 100,
-      150, 125,
-      175, 100]),
-    gl.STATIC_DRAW);
+main();
+function setRectangle(gl, x, y, width, height) {
+  var x1 = x;
+  var x2 = x + width;
+  var y1 = y;
+  var y2 = y + height;
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    x1, y1,
+    x2, y1,
+    x1, y2,
+    x1, y2,
+    x2, y1,
+    x2, y2,
+  ]), gl.STATIC_DRAW);
 }
