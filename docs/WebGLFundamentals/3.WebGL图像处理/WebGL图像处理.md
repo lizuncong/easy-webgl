@@ -82,3 +82,54 @@ let fragmentSource = `
 ```
 
 这里有个点需要注意， uniform sampler2D 变量默认为0。因此，如果我们的纹理刚好绑定在纹理单元0，此时就不需要通过js往片段着色器传递`diffuse`的值
+
+
+## 如何获取其他像素的颜色值？
+如果我们需要将每个像素的值设置为与左右像素的均值，应该怎么做？由于WebGL的纹理坐标范围是 0.0 到 1.0 ， 那我们可以简单计算出移动一个像素对应的距离， onePixel = 1.0 / textureSize。
+
+
+还是以下面的图为例，这张图片尺寸240 * 180。即水平方向有240个像素，但纹理坐标的范围是0.0到1.0。所以一个像素的刻度为1/240。
+
+对于水平方向的每个像素来说，假设它当前的纹理坐标是x，那么它左边像素的纹理坐标就应该是x - 1/240。它又变像素的纹理坐标就应该是x + 1/240。
+
+![image](./leaves.jpg)
+
+
+因此，我们的片段着色器应该这么写：
+
+```javascript
+precision mediump float;
+ 
+// 纹理
+uniform sampler2D u_image;
+uniform vec2 u_textureSize;
+ 
+// 从顶点着色器传入的像素坐标
+varying vec2 v_texCoord;
+ 
+void main() {
+   // 计算1像素对应的纹理坐标
+   vec2 onePixel = vec2(1.0, 1.0) / u_textureSize;
+ 
+   // 对左中右像素求均值
+   gl_FragColor = (
+       texture2D(u_image, v_texCoord) +
+       texture2D(u_image, v_texCoord + vec2(onePixel.x, 0.0)) +
+       texture2D(u_image, v_texCoord + vec2(-onePixel.x, 0.0))) / 3.0;
+}
+```
+
+我们需要在JavaScript中传入纹理的大小。
+
+```javascript
+...
+ 
+var textureSizeLocation = gl.getUniformLocation(program, "u_textureSize");
+ 
+...
+ 
+// 设置图像的大小
+gl.uniform2f(textureSizeLocation, image.width, image.height);
+ 
+...
+```
