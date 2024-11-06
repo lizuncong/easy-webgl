@@ -54,4 +54,4 @@ gl.vertexAttribPointer(
 
 
 
-[image](../../../imgs/vertex.jpg)
+![image](../../../imgs/vertex.jpg)
