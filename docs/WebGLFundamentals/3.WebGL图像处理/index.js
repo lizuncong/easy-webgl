@@ -41,6 +41,7 @@ let fragmentSource = `
   void main() {
     // 在纹理上寻找对应颜色值
     gl_FragColor = texture2D(u_image, v_texCoord);
+    // gl_FragColor = texture2D(u_image, v_texCoord).bgra;
   }
 `;
 
