@@ -55,3 +55,135 @@ gl.vertexAttribPointer(
 
 
 ![image](../../../imgs/vertex.jpg)
+
+
+
+## 属性
+在 WebGL 中，属性是顶点着色器的输入，从缓冲中获取数据。 当 gl.drawArrays 或 gl.drawElements 被调用时，WebGL 会多次执行用户提供的顶点着色器。 每次迭代时，属性定义了如何从它们绑定的缓冲中读取数据，并提供给顶点着色器内的属性。
+
+如果用 JavaScript 实现，它们看起来可能像这样
+
+```js
+// 伪代码
+const gl = {
+  arrayBuffer: null,
+  vertexArray: {
+    attributes: [
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+    ],
+    elementArrayBuffer: null,
+  },
+}
+```
+
+### gl.enableVertexAttribArray
+```js
+// 伪代码
+gl.enableVertexAttribArray = function(location) {
+  const attrib = gl.vertexArray.attributes[location];
+  attrib.enable = true;
+};
+ 
+gl.disableVertexAttribArray = function(location) {
+  const attrib = gl.vertexArray.attributes[location];
+  attrib.enable = false;
+};
+```
+
+### gl.vertexAttribPointer
+gl.vertexAttribPointer 用来设置几乎所有其它属性设置。 它实现起来像这样：
+```js
+// 伪代码
+gl.vertexAttribPointer = function(location, size, type, normalize, stride, offset) {
+  const attrib = gl.vertexArray.attributes[location];
+  attrib.size = size;
+  attrib.type = type;
+  attrib.normalize = normalize;
+  attrib.stride = stride ? stride : sizeof(type) * size;
+  attrib.offset = offset;
+  attrib.buffer = gl.arrayBuffer;  // !!!! <-----
+};
+```
+注意，当我们调用 gl.vertexAttribPointer 时，attrib.buffer 会被设置成当前 gl.arrayBuffer 的值。 上面伪代码中，通过调用 gl.bindBuffer(gl.ARRAY_BUFFER, someBuffer) 来设置 gl.arrayBuffer 的值。
+
+```js
+// 伪代码
+gl.bindBuffer = function(target, buffer) {
+  switch (target) {
+    case ARRAY_BUFFER:
+      gl.arrayBuffer = buffer;
+      break;
+    case ELEMENT_ARRAY_BUFFER;
+      gl.vertexArray.elementArrayBuffer = buffer;
+      break;
+  ...
+};
+```
+
+### 完整的属性状态
+上面没有提到的是，每个属性都有默认值。没有提到是因为通常不这么使用。
+
+```js
+const gl = {
+  arrayBuffer: null,
+  attributeValues: [
+  [0, 0, 0, 1],
+  [0, 0, 0, 1],
+    [0, 0, 0, 1],
+  [0, 0, 0, 1],
+    [0, 0, 0, 1],
+  [0, 0, 0, 1],
+    [0, 0, 0, 1],
+  [0, 0, 0, 1],
+ ],
+  vertexArray: {
+    attributes: [
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+      { enable: ?, type: ?, size: ?, normalize: ?, stride: ?, offset: ?, buffer: ?, divisor: 0, },
+    ],
+    elementArrayBuffer: null,
+  },
+}
+```
+(需要细品这个enable的作用！！！！)
+>可以通过各个 gl.vertexAttribXXX 函数来设置每个属性的值。当 enable 为 false 时，该值被使用。 
+当 enable 为 true 时，属性从分配的缓冲取值。
+
+举个例子：
+
+```js
+let vertexSource = `
+    attribute vec2 a_position;
+    void main(){
+        gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+`;
+//...
+const a_position = gl.getAttribLocation(program, 'a_position')
+gl.vertexAttrib2f(a_position, -0.6, 0.0)
+```
+
+当我们调用`gl.vertexAttrib2f`时，类似这样：
+
+```js
+// 伪代码
+gl.vertexAttrib2f = function(location, a, b) {
+  const attrib = gl.attributeValues[location];
+  attrib[0] = a;
+  attrib[1] = b;
+};
+```
+当顶点着色器运行时，如果属性`a_position`的enable为false,则顶点着色器会读取gl.attributeValues[a_position]的值。如果enable为true，属性从分配的缓冲取值
