@@ -15,14 +15,15 @@
     #webgl {
       box-sizing: border-box;
       border: 1px solid black;
-      width: 100vw;
-      height: 500px;
+      /* width: 100vw;
+      height: 500px; */
     }
   </style>
   <script id="vertex-shader-2d" type="notjs">
-      attribute vec4 a_position;
+      attribute vec2 a_position;
       void main() {
-        gl_Position = a_position;
+        gl_Position = vec4(a_position, 0, 1);
+        gl_PointSize = 10.0;
       }
     </script>
   <script id="fragment-shader-2d" type="notjs">
