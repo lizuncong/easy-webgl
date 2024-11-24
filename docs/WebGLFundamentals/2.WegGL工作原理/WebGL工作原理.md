@@ -134,14 +134,14 @@ gl.bindBuffer = function(target, buffer) {
 const gl = {
   arrayBuffer: null,
   attributeValues: [
-  [0, 0, 0, 1],
-  [0, 0, 0, 1],
     [0, 0, 0, 1],
-  [0, 0, 0, 1],
     [0, 0, 0, 1],
-  [0, 0, 0, 1],
     [0, 0, 0, 1],
-  [0, 0, 0, 1],
+    [0, 0, 0, 1],
+    [0, 0, 0, 1],
+    [0, 0, 0, 1],
+    [0, 0, 0, 1],
+    [0, 0, 0, 1],
  ],
   vertexArray: {
     attributes: [
