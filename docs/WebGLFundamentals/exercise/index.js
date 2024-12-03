@@ -1,6 +1,5 @@
 import initShaders from "./initShaders.js";
 
-
 const main = () => {
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl2')
@@ -51,9 +50,12 @@ const main = () => {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   gl.useProgram(program1)
+  // 先修改属性的默认值
   gl.vertexAttrib4f(positionLocation1, 0.5, 0.5, 0.5, 1.0);
   gl.drawArrays(gl.POINTS, 0, 1)
 
+  // 然后再使用缓冲，注意，这里缓冲只提供了一个数据，剩下三个数据需要默认从vec4(0,0,0,1.0)中读取后面三个
+  // 而不是从属性的默认值读取
   gl.enableVertexAttribArray(positionLocation1);
 
   // 告诉webgl绘制3个点
