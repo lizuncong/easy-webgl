@@ -54,12 +54,14 @@ const main = () => {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   gl.useProgram(program1)
-  // 先修改属性的默认值
+  // 先修改属性的默认值。但需要注意的是，
+  // 即使修改了默认值，在 WebGL 读取缓冲时，
+  // 默认值还是会按照 vec4(0.0, 0.0, 0.0, 1.0) 读取。
   gl.vertexAttrib4f(positionLocation1, 0.5, 0.5, 0.5, 1.0);
   gl.drawArrays(gl.POINTS, 0, 1)
 
   // 然后再使用缓冲，注意，这里缓冲只提供了一个数据，剩下三个数据需要默认从vec4(0,0,0,1.0)中读取后面三个
-  // 而不是从属性的默认值读取
+  // 而不是从属性修改后的默认值读取，比如上面修改后的属性默认值为vec4(0.5,0.5,0.5,1.0)
   gl.enableVertexAttribArray(positionLocation1);
 
   // 告诉webgl绘制3个点
