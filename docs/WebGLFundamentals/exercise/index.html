@@ -12,28 +12,19 @@
       margin: 20px;
     }
 
-    #webgl {
-      box-sizing: border-box;
+    .container {
+      font-size: 0;
+      display: inline-block;
       border: 1px solid black;
     }
   </style>
-  <script id="vertex-shader-2d" type="notjs">
-      attribute vec2 a_position;
-      void main() {
-        gl_Position = vec4(a_position, 0, 1);
-        gl_PointSize = 10.0;
-      }
-    </script>
-  <script id="fragment-shader-2d" type="notjs">
-      precision mediump float;
-      void main() {
-        gl_FragColor = vec4(1,0,0.5,1);
-      }
-    </script>
 </head>
 
 <body>
-  <canvas id="webgl">你的浏览器不支持canvas</canvas>
+  <div class="container">
+    <canvas id="webgl">你的浏览器不支持canvas</canvas>
+  </div>
   <script type="module" src="./index.js"></script>
 </body>
+
 </html>
