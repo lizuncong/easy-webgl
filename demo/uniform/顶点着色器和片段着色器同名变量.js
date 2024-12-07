@@ -1,6 +1,7 @@
 import initShaders from "./initShaders.js";
 
-
+// 如果顶点着色器和片段着色器定义同名的uniform变量，
+// 则这个变量会同时作用于两个着色器
 const main = () => {
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl2')
