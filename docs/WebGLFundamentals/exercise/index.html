@@ -57,10 +57,17 @@
         attribute vec2 a_position;
         attribute vec3 a_color;
         varying vec3 v_color;
+        uniform vec2 u_resolution;
         void main(){
+            // 从像素坐标转换到0.0到1.0
+            vec2 zeroToOne = a_position / u_resolution;
+            // 再把0->1转换0->2
+            vec2 zeroToTwo = zeroToOne * 2.0;
+            // 把0->2转换到-1->+1。
+            vec2 clipSpace = zeroToTwo - 1.0;
             gl_PointSize = 10.0;
             v_color = a_color;
-            gl_Position = vec4(a_position, 0.0, 1.0);
+            gl_Position = vec4(clipSpace * vec2(1, -1), 0.0, 1.0);
         }
       `
       const fragmentShaderSource1 = `
@@ -73,15 +80,16 @@
       const program1 = initShaders(gl, vertexShaderSource1, fragmentShaderSource1)
       const positionLocation1 = gl.getAttribLocation(program1, 'a_position')
       const colorLocation1 = gl.getAttribLocation(program1, 'a_color')
+      const resolutionUniformLocation = gl.getUniformLocation(program1, "u_resolution");
 
 
       let verticesInfo = [
         // 每行前两个表示坐标，后面三个表示颜色
-        1.0, 0.0, 1.0, 0.0, 0.0, // (1.0, 0.0) 红色
-        -1.0, 0.0, 0.0, 1.0, 0.0, // (-1.0, 0.0) 绿色
-        0.0, 0.0, 0.0, 0.0, 1.0, // (0.0, 0.0)蓝色
-        0.0, 1.0, 1.0, 0.0, 0.0, // (0.0, 1.0) 红色
-        0.0, -1.0, 0.0, 1.0, 0.0 // (0.0, -1.0) 绿色
+        50, 50, 1.0, 0.0, 0.0, // 红色
+        250, 50, 0.0, 1.0, 0.0, //  绿色
+        50, 250, 0.0, 0.0, 1.0, // 蓝色
+        250, 250, 1.0, 0.0, 0.0, //  红色
+        0, 0, 0.0, 1.0, 0.0 // 绿色
       ]
       verticesInfo = new Float32Array(verticesInfo)
 
@@ -109,8 +117,8 @@
       );
 
       // 通过js调整drawingbuffer大小
-      canvas.width = canvas.clientWidth * window.devicePixelRatio;
-      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
       // 重新设置视口
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
       console.log('当前视口：', gl.getParameter(gl.VIEWPORT))
@@ -121,6 +129,7 @@
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       gl.useProgram(program1)
+      gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
       gl.enableVertexAttribArray(positionLocation1);
       gl.enableVertexAttribArray(colorLocation1);

@@ -8,10 +8,17 @@ const main = () => {
     attribute vec2 a_position;
     attribute vec3 a_color;
     varying vec3 v_color;
+    uniform vec2 u_resolution;
     void main(){
+        // 从像素坐标转换到0.0到1.0
+        vec2 zeroToOne = a_position / u_resolution;
+        // 再把0->1转换0->2
+        vec2 zeroToTwo = zeroToOne * 2.0;
+        // 把0->2转换到-1->+1。
+        vec2 clipSpace = zeroToTwo - 1.0;
         gl_PointSize = 10.0;
         v_color = a_color;
-        gl_Position = vec4(a_position, 0.0, 1.0);
+        gl_Position = vec4(clipSpace, 0.0, 1.0);
     }
   `
   const fragmentShaderSource1 = `
@@ -24,6 +31,7 @@ const main = () => {
   const program1 = initShaders(gl, vertexShaderSource1, fragmentShaderSource1)
   const positionLocation1 = gl.getAttribLocation(program1, 'a_position')
   const colorLocation1 = gl.getAttribLocation(program1, 'a_color')
+  const resolutionUniformLocation = gl.getUniformLocation(program1, "u_resolution");
 
 
   let verticesInfo = [
