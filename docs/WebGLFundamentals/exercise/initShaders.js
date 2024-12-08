@@ -40,7 +40,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
   return program;
 }
 
-export default function initShaders(gl, vertexSource, fragmentSource) {
+function initShaders(gl, vertexSource, fragmentSource) {
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSource);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
   const program = createProgram(gl, vertexShader, fragmentShader);
