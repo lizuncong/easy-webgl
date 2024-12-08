@@ -59,15 +59,11 @@
         varying vec3 v_color;
         uniform vec2 u_resolution;
         void main(){
-            // 从像素坐标转换到0.0到1.0
-            vec2 zeroToOne = a_position / u_resolution;
-            // 再把0->1转换0->2
-            vec2 zeroToTwo = zeroToOne * 2.0;
-            // 把0->2转换到-1->+1。
-            vec2 clipSpace = zeroToTwo - 1.0;
+            float x2 = 2.0 * a_position.x / u_resolution.x - 1.0;
+            float y2 = 1.0 - 2.0 * a_position.y / u_resolution.y;
             gl_PointSize = 10.0;
             v_color = a_color;
-            gl_Position = vec4(clipSpace * vec2(1, -1), 0.0, 1.0);
+            gl_Position = vec4(x2, y2, 0.0, 1.0);
         }
       `
       const fragmentShaderSource1 = `
@@ -117,8 +113,8 @@
       );
 
       // 通过js调整drawingbuffer大小
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
       // 重新设置视口
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
       console.log('当前视口：', gl.getParameter(gl.VIEWPORT))
@@ -129,7 +125,7 @@
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       gl.useProgram(program1)
-      gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+      gl.uniform2f(resolutionUniformLocation, gl.canvas.clientWidth, gl.canvas.clientHeight);
 
       gl.enableVertexAttribArray(positionLocation1);
       gl.enableVertexAttribArray(colorLocation1);
