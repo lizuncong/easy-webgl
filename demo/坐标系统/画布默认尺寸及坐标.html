@@ -26,6 +26,10 @@
   </div>
   <script src="./initShaders.js"></script>
   <script>
+    // 默认情况下，canvas的宽会被初始化为300，高初始化为150。
+    // 具体可以看MDN关于canvas尺寸的设置。
+    // 因此drawingbuffer的尺寸也是300 * 150，
+    // 此时在画布中绘制的图形显示正常。
     const main = () => {
       const canvas = document.getElementById('webgl')
       const gl = canvas.getContext('webgl2')
