@@ -27,8 +27,8 @@
       background-color: red;
     }
     #relativecontainer {
-      width: 100px;
-      height: 100px;
+      width: 300px;
+      height: 150px;
       box-sizing: border-box;
       border: 1px solid red;;
     }
@@ -45,6 +45,11 @@
   
   <script src="./initShaders.js"></script>
   <script>
+    // 通过js修改drawingbuffer大小，需要重新调整视口，不然就会出现问题。
+    // 图形绘制虽然是正常了。但是绘制的点并没有覆盖整个画布，
+    // 看上去在左下角的300 * 150的区域（可以通过参照物容器的尺寸
+    // 得出左下角绘制点的区域在300 * 150）。
+    // 这是为什么？这就涉及到视口（viewport）。
     const main = () => {
       const canvas = document.getElementById('webgl')
       const gl = canvas.getContext('webgl2')
@@ -106,12 +111,8 @@
       // 通过js调整drawingbuffer大小
       canvas.width  = canvas.clientWidth;
       canvas.height = canvas.clientHeight;
-      // 重新设置视口
-      gl.viewport(100, 100, 300, 150);
-      console.log('当前视口：', gl.getParameter(gl.VIEWPORT))
-
+    
       gl.clearColor(0, 0, 0, 0)
-      
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       gl.useProgram(program1)
