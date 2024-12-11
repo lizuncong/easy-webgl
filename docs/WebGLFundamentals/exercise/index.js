@@ -1,5 +1,5 @@
 const main = (image) => {
-  console.log('image...', image)
+  console.log('image...', image.width, image.height)
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl2')
   const vertexShaderSource1 = `
@@ -31,13 +31,14 @@ const main = (image) => {
   // 给矩形提供纹理坐标
   const texCoordBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+  const x = 1.0, y = 1.0;
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
     0.0, 0.0,
-    1.0, 0.0,
-    0.0, 0.5,
-    0.0, 0.5,
-    1.0, 0.0,
-    1.0, 0.5
+    x, 0.0,
+    0.0, y,
+    0.0, y,
+    x, 0.0,
+    x, y
   ]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(texCoordLocation);
   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
@@ -55,15 +56,14 @@ const main = (image) => {
   // 将图像上传到纹理
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
-
+  const rectX = -0.5, rectY = 0.5, rectWidth = 0.8, rectHeight = rectWidth * (image.height / image.width)
   let verticesInfo = [
-    // 每行前两个表示坐标，后面三个表示颜色
-    -0.5, 0.5,
-    0.5, 0.5,
-    -0.5, -0.5,
-    -0.5, -0.5,
-    0.5, 0.5,
-    0.5, -0.5,
+    rectX, rectY,
+    rectX + rectWidth, rectY,
+    rectX, rectY - rectHeight,
+    rectX, rectY - rectHeight,
+    rectX + rectWidth, rectY,
+    rectX + rectWidth, rectY - rectHeight,
   ]
   verticesInfo = new Float32Array(verticesInfo)
 
