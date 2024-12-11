@@ -1,46 +1,69 @@
-import initShaders from "./initShaders.js";
-
-
-const main = () => {
+const main = (image) => {
+  console.log('image...', image)
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl2')
   const vertexShaderSource1 = `
+    attribute vec2 a_texCoord;
     attribute vec2 a_position;
-    attribute vec3 a_color;
-    varying vec3 v_color;
-    uniform vec2 u_resolution;
+    varying vec2 v_texCoord;
     void main(){
-        // 从像素坐标转换到0.0到1.0
-        vec2 zeroToOne = a_position / u_resolution;
-        // 再把0->1转换0->2
-        vec2 zeroToTwo = zeroToOne * 2.0;
-        // 把0->2转换到-1->+1。
-        vec2 clipSpace = zeroToTwo - 1.0;
         gl_PointSize = 10.0;
-        v_color = a_color;
-        gl_Position = vec4(clipSpace, 0.0, 1.0);
+        gl_Position = vec4(a_position, 0.0, 1.0);
+        // 将纹理坐标传给片段着色器
+        // GPU会在点之间进行插值
+        v_texCoord = a_texCoord;
     }
   `
   const fragmentShaderSource1 = `
     precision mediump float;
-    varying vec3 v_color;
+    uniform sampler2D u_image;
+    // 从顶点着色器传入的纹理坐标
+    varying vec2 v_texCoord;
     void main(){
-        gl_FragColor = vec4(v_color, 1.0);
+      // 在纹理上寻找对应颜色值
+      gl_FragColor = texture2D(u_image, v_texCoord);
     }
   `
   const program1 = initShaders(gl, vertexShaderSource1, fragmentShaderSource1)
   const positionLocation1 = gl.getAttribLocation(program1, 'a_position')
-  const colorLocation1 = gl.getAttribLocation(program1, 'a_color')
-  const resolutionUniformLocation = gl.getUniformLocation(program1, "u_resolution");
+  const texCoordLocation = gl.getAttribLocation(program1, "a_texCoord");
+
+  // 给矩形提供纹理坐标
+  const texCoordBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    0.0, 0.0,
+    1.0, 0.0,
+    0.0, 0.5,
+    0.0, 0.5,
+    1.0, 0.0,
+    1.0, 0.5
+  ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(texCoordLocation);
+  gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+  // 创建纹理
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // 设置参数，让我们可以绘制任何尺寸的图像
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // 将图像上传到纹理
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
 
   let verticesInfo = [
     // 每行前两个表示坐标，后面三个表示颜色
-    1.0, 0.0, 1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 1.0,
-    0.0, 1.0, 1.0, 0.0, 0.0,
-    0.0, -1.0, 0.0, 1.0, 0.0
+    -0.5, 0.5,
+    0.5, 0.5,
+    -0.5, -0.5,
+    -0.5, -0.5,
+    0.5, 0.5,
+    0.5, -0.5,
   ]
   verticesInfo = new Float32Array(verticesInfo)
 
@@ -54,31 +77,27 @@ const main = () => {
     2,
     gl.FLOAT,
     false,
-    20,
+    8,
     0
-  );
-
-  gl.vertexAttribPointer(
-    colorLocation1,
-    3,
-    gl.FLOAT,
-    false,
-    20,
-    8
   );
 
 
 
   gl.clearColor(0, 0, 0, 0)
+
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   gl.useProgram(program1)
 
   gl.enableVertexAttribArray(positionLocation1);
-  gl.enableVertexAttribArray(colorLocation1);
 
-  gl.drawArrays(gl.POINTS, 0, 5)
+  gl.drawArrays(gl.TRIANGLES, 0, 6)
 
 }
 
-main();
+
+const image = new Image();
+image.src = "./1.jpeg";  // 必须在同一域名下
+image.onload = function () {
+  main(image);
+}
