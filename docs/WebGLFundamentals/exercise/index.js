@@ -1,7 +1,7 @@
 const main = (image) => {
   console.log('image...', image.width, image.height)
   const canvas = document.getElementById('webgl')
-  const gl = canvas.getContext('webgl2')
+  const gl = canvas.getContext('webgl')
   const vertexShaderSource1 = `
     attribute vec2 a_texCoord;
     attribute vec2 a_position;
@@ -36,9 +36,10 @@ const main = (image) => {
     0.0, 0.0,
     x, 0.0,
     0.0, y,
-    0.0, y,
-    x, 0.0,
-    x, y
+    // x, 0.0,
+    // 0.0, y,
+
+    // x, y
   ]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(texCoordLocation);
   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
@@ -61,9 +62,9 @@ const main = (image) => {
     rectX, rectY,
     rectX + rectWidth, rectY,
     rectX, rectY - rectHeight,
-    rectX, rectY - rectHeight,
-    rectX + rectWidth, rectY,
-    rectX + rectWidth, rectY - rectHeight,
+    // rectX, rectY - rectHeight,
+    // rectX + rectWidth, rectY,
+    // rectX + rectWidth, rectY - rectHeight,
   ]
   verticesInfo = new Float32Array(verticesInfo)
 
@@ -91,7 +92,7 @@ const main = (image) => {
 
   gl.enableVertexAttribArray(positionLocation1);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 6)
+  gl.drawArrays(gl.TRIANGLES, 0, 3)
 
 }
 
