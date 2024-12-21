@@ -1,5 +1,4 @@
 const main = (image) => {
-  console.log('image...', image.width, image.height)
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl')
   const vertexShaderSource1 = `
@@ -36,11 +35,20 @@ const main = (image) => {
     0.0, 0.0,
     x, 0.0,
     0.0, y,
-    // x, 0.0,
-    // 0.0, y,
-
-    // x, y
+    0.0, y,
+    x, 0.0,
+    x, y
   ]), gl.STATIC_DRAW);
+
+  const rectX = -0.5, rectY = 0.5, rectWidth = 0.8, rectHeight = 0.8 //rectWidth * (image.height / image.width)
+  let verticesInfo = [
+    rectX, rectY,
+    rectX + rectWidth, rectY,
+    rectX, rectY - rectHeight,
+    rectX, rectY - rectHeight,
+    rectX + rectWidth, rectY,
+    rectX + rectWidth, rectY - rectHeight,
+  ]
   gl.enableVertexAttribArray(texCoordLocation);
   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
@@ -48,24 +56,38 @@ const main = (image) => {
   var texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  // 设置参数，让我们可以绘制任何尺寸的图像
+  // 用 3x2 的像素填充纹理
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const width = 64;
+  const height = 85.3;
+  const border = 0;
+  const format = gl.RGBA;
+  const type = gl.UNSIGNED_BYTE;
+  const data = new Uint8Array([
+    255, 0, 0, 255,
+    0, 255, 0, 255,
+    0, 0, 255, 255,
+    255, 255, 0, 255,
+
+    255, 0, 255, 255,
+    0, 255, 255, 255,
+    255, 255, 255, 255,
+    0, 0, 0, 255,
+  ]);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  // console.log('image...', image)
+  // // 将图像上传到纹理
+  // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-  // 将图像上传到纹理
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-
-  const rectX = -0.5, rectY = 0.5, rectWidth = 0.8, rectHeight = rectWidth * (image.height / image.width)
-  let verticesInfo = [
-    rectX, rectY,
-    rectX + rectWidth, rectY,
-    rectX, rectY - rectHeight,
-    // rectX, rectY - rectHeight,
-    // rectX + rectWidth, rectY,
-    // rectX + rectWidth, rectY - rectHeight,
-  ]
+  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border,
+    format, type, image);
   verticesInfo = new Float32Array(verticesInfo)
 
   const vertexBuffer = gl.createBuffer();
@@ -92,13 +114,28 @@ const main = (image) => {
 
   gl.enableVertexAttribArray(positionLocation1);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 3)
+  gl.drawArrays(gl.TRIANGLES, 0, 6)
 
 }
 
 
-const image = new Image();
-image.src = "./1.jpeg";  // 必须在同一域名下
-image.onload = function () {
-  main(image);
-}
+// const image = new Image();
+// image.src = "./1.jpeg";  // 必须在同一域名下
+// image.onload = function () {
+//   main(image);
+// }
+
+// 图片URL
+const imageUrl = './1.jpeg';
+
+// 使用fetch获取图片的ArrayBuffer
+fetch(imageUrl)
+  .then(response => response.arrayBuffer())
+  .then(buffer => {
+    // buffer 包含了图片的二进制数据
+    console.log(new Uint8Array(buffer));
+    main(new Uint8Array(buffer))
+  })
+  .catch(error => {
+    console.error('Error fetching image:', error);
+  });
