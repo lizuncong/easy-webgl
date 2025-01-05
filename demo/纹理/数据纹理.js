@@ -123,3 +123,25 @@ const main = (image) => {
   image.onload = function () {
     main(image);
   }
+
+
+
+  // 图片URL
+const imageUrl = 'https://example.com/image.jpg';
+ 
+// 使用fetch获取图片的Response
+fetch(imageUrl)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.arrayBuffer(); // 转换响应为ArrayBuffer
+  })
+  .then(arrayBuffer => {
+    // arrayBuffer 包含了图片的二进制数据
+    console.log('图片的二进制数据:', new Uint8Array(arrayBuffer));
+ 
+  })
+  .catch(error => {
+    console.error('读取图片二进制数据时发生错误:', error);
+  });
