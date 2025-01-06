@@ -1,7 +1,7 @@
 const main = (image) => {
   console.log('image...', image.width, image.height)
   const canvas = document.getElementById('webgl')
-  const gl = canvas.getContext('webgl')
+  const gl = canvas.getContext('webgl2')
   const vertexShaderSource1 = `
     attribute vec2 a_texCoord;
     attribute vec2 a_position;
@@ -33,14 +33,23 @@ const main = (image) => {
   gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
   const x = 1.0, y = 1.0;
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    // 0.0, 0.0,
-    // x, 0.0,
-    // 0.0, y,
-   
+    0.0, 0.0,
+    x, 0.0,
     0.0, y,
-    x, y,
-    0.0, 0.0
+    0.0, y,
+    x, 0.0,
+    x, y
   ]), gl.STATIC_DRAW);
+
+  const rectX = -0.5, rectY = 0.5, rectWidth = 0.8, rectHeight = rectWidth * (image.height / image.width)
+  let verticesInfo = [
+    rectX, rectY,
+    rectX + rectWidth, rectY,
+    rectX, rectY - rectHeight,
+    rectX, rectY - rectHeight,
+    rectX + rectWidth, rectY,
+    rectX + rectWidth, rectY - rectHeight,
+  ]
   gl.enableVertexAttribArray(texCoordLocation);
   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
@@ -48,25 +57,32 @@ const main = (image) => {
   var texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  // 设置参数，让我们可以绘制任何尺寸的图像
+  // 用 3x2 的像素填充纹理
+  const level = 0;
+  const internalFormat = gl.LUMINANCE;
+  const width = 3;
+  const height = 2;
+  const border = 0;
+  const format = gl.LUMINANCE;
+  const type = gl.UNSIGNED_BYTE;
+  const data = new Uint8Array([
+    128, 64, 128,
+    0, 192, 0,
+  ]);
+  const alignment = 1;
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT, alignment);
+  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border,
+    format, type, data);
+
+  // 设置筛选器，我们不需要使用贴图所以就不用筛选器了
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
-  // 将图像上传到纹理
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  // 放在gl.texParameteri后面还是会报错
+  // gl.pixelStorei(gl.UNPACK_ALIGNMENT, alignment);
 
-  const rectX = -0.5, rectY = 0.5, rectWidth = 0.8, rectHeight = rectWidth * (image.height / image.width)
-  let verticesInfo = [
-    rectX, rectY,
-    rectX + rectWidth, rectY,
-    rectX, rectY - rectHeight,
-    // rectX, rectY - rectHeight,
-    // rectX + rectWidth, rectY,
-    // rectX + rectWidth, rectY - rectHeight,
-  ]
   verticesInfo = new Float32Array(verticesInfo)
 
   const vertexBuffer = gl.createBuffer();
@@ -93,7 +109,7 @@ const main = (image) => {
 
   gl.enableVertexAttribArray(positionLocation1);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 3)
+  gl.drawArrays(gl.TRIANGLES, 0, 6)
 
 }
 
@@ -105,22 +121,23 @@ image.onload = function () {
 }
 
 
-  // 图片URL
-  const imageUrl = "./1.jpeg"
- 
-  // 使用fetch获取图片的Response
-  fetch(imageUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-      return response.arrayBuffer(); // 转换响应为ArrayBuffer
-    })
-    .then(arrayBuffer => {
-      // arrayBuffer 包含了图片的二进制数据
-      console.log('图片的二进制数据:', new Uint8Array(arrayBuffer));
-   
-    })
-    .catch(error => {
-      console.error('读取图片二进制数据时发生错误:', error);
-    });
+
+// 图片URL
+const imageUrl = 'https://example.com/image.jpg';
+
+// 使用fetch获取图片的Response
+fetch(imageUrl)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.arrayBuffer(); // 转换响应为ArrayBuffer
+  })
+  .then(arrayBuffer => {
+    // arrayBuffer 包含了图片的二进制数据
+    console.log('图片的二进制数据:', new Uint8Array(arrayBuffer));
+
+  })
+  .catch(error => {
+    console.error('读取图片二进制数据时发生错误:', error);
+  });
