@@ -1,2 +1,2 @@
 ## hello world
-![image](../../imgs/img_01.jpg)
+![image](../../easy-webgl/img_01.jpg)
