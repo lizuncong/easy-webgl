@@ -1,0 +1,24 @@
+.markdown-body {
+  padding: 40px;
+  .my-code {
+    background: transparent !important;
+  }
+  img {
+    max-width: 100%;
+    max-height: 300px;
+  }
+  .high-lighter {
+    position: relative;
+    .copy {
+      display: none;
+      position: absolute;
+      right: 20px;
+      cursor: pointer;
+    }
+    &:hover {
+      .copy {
+        display: inline-block;
+      }
+    }
+  }
+}
