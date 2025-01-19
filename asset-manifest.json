@@ -1,19 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.ad80ac3f.css",
-    "main.js": "/static/js/main.f626e3cc.js",
-    "A000.css": "/static/css/A000.a8a8a7ed.chunk.css",
-    "A000.js": "/static/js/A000.8346f6ed.chunk.js",
+    "main.css": "/static/css/main.3694ae33.css",
+    "main.js": "/static/js/main.5246fa9f.js",
+    "A000.js": "/static/js/A000.73e6e93a.chunk.js",
+    "A010.js": "/static/js/A010.500ea93d.chunk.js",
     "../build/img_01.jpg": "/../build/img_01.jpg",
+    "static/media/属性的赋值方式.md": "/static/media/属性的赋值方式.65a5cf288acc3aace96d.md",
     "index.html": "/index.html",
     "static/media/test.md": "/static/media/test.cebae18a2b45eb8619ec.md",
-    "main.ad80ac3f.css.map": "/static/css/main.ad80ac3f.css.map",
-    "main.f626e3cc.js.map": "/static/js/main.f626e3cc.js.map",
-    "A000.a8a8a7ed.chunk.css.map": "/static/css/A000.a8a8a7ed.chunk.css.map",
-    "A000.8346f6ed.chunk.js.map": "/static/js/A000.8346f6ed.chunk.js.map"
+    "main.3694ae33.css.map": "/static/css/main.3694ae33.css.map",
+    "main.5246fa9f.js.map": "/static/js/main.5246fa9f.js.map",
+    "A000.73e6e93a.chunk.js.map": "/static/js/A000.73e6e93a.chunk.js.map",
+    "A010.500ea93d.chunk.js.map": "/static/js/A010.500ea93d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ad80ac3f.css",
-    "static/js/main.f626e3cc.js"
+    "static/css/main.3694ae33.css",
+    "static/js/main.5246fa9f.js"
   ]
 }
