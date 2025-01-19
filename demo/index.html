@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="WebGL" />
+  <title>WebGL</title>
+  <style>
+    body {
+      margin: 20px;
+    }
+    #webgl {
+      width: 500px;
+      height: 500px;
+    }
+    .container {
+      font-size: 0;
+      display: inline-block;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <canvas width="500" height="500" id="webgl">你的浏览器不支持canvas</canvas>
+  </div>
+  <script src="./initShaders.js"></script>
+  <script src="./index.js"></script>
+</body>
+</html>
