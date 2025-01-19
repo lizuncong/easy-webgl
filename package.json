@@ -77,6 +77,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
+    "doc": "node scripts/buildDoc.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
