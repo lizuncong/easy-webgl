@@ -8,15 +8,19 @@ import "github-markdown-css";
 
 import "./index.less";
 
-function Shapes({ src }) {
+function Shapes({ src, srcDoc }) {
   const [mdText, setMdText] = useState("");
   useEffect(() => {
+    if (srcDoc) {
+      setMdText(srcDoc)
+      return;
+    }
     fetch(src)
       .then((response) => response.text())
       .then((text) => {
         setMdText(text);
       });
-  }, [src]);
+  }, [src, srcDoc]);
   return (
     <div className="markdown-body">
       <ReactMarkdown

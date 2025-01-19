@@ -7,6 +7,7 @@ const dynamicPages = path.join(process.cwd(), "./src/dynamic/pages");
 const dynamicMenus = path.join(process.cwd(), "./src/dynamic/menus.jsx");
 const dynamicRoutes = path.join(process.cwd(), "./src/dynamic/routes.jsx");
 const dynamicPagesImp = "@/dynamic/pages/";
+const { getMarkDownContent } = require('./util')
 const whiteList = [];
 const digestMessage = (message) => {
   return 'A_' + crypto.createHash('md5').update(message).digest('hex');
@@ -92,14 +93,14 @@ const generatePagesJSX = async (files) => {
             return;
           }
           if(fileObj.type === 'md'){
+            const content = getMarkDownContent(`${fileObj.key}.md`)
             fs.writeFile(
               `${path.join(dynamicPages, filename)}.jsx`,
               `import React from "react";
   import MarkDown from "@/components/markdown";
-  import shape from "@${docDir}/${filename}.md";
   
   function Index() {
-    return <MarkDown src={shape} />;
+    return <MarkDown srcDoc={${JSON.stringify(content)}} />;
   }
   
   export default Index;`,
