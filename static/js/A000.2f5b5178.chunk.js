@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkWebGL=self.webpackChunkWebGL||[]).push([[828],{497:(e,s,c)=>{c.r(s),c.d(s,{default:()=>r});c(5043);var l=c(8044),n=c(579);const r=function(){return(0,n.jsx)(l.A,{srcDoc:"## hello world\n![image](../../easy-webgl/img_01.jpg)"})}}}]);
+//# sourceMappingURL=A000.2f5b5178.chunk.js.map
