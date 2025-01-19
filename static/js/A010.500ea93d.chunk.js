@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkWebGL=self.webpackChunkWebGL||[]).push([[487],{5384:(e,s,u)=>{u.r(s),u.d(s,{default:()=>t});u(5043);var c=u(8044),n=u(8395),r=u(579);const t=function(){return(0,r.jsx)(c.A,{src:n})}}}]);
-//# sourceMappingURL=A010.500ea93d.chunk.js.map
