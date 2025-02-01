@@ -1,9 +1,10 @@
+## 前言
+本篇文章主要演示vertexAttribPointer传递的size小于顶点着色器中定义的attribute属性的组成数量时，顶点着色器如何取值。比如顶点着色器中声明attribute vec4 a_position;具有4个分量，但是vertexAttribPointer
+的size却为1，此时a_position属性应该如何读取值
+
+```js
 import initShaders from "./initShaders.js";
 
-// 本Demo演示：
-// vertexAttribPointer传递的size小于顶点着色器中定义的attribute属性的组成数量
-// 比如顶点着色器中声明attribute vec4 a_position;具有4个分量，但是vertexAttribPointer
-// 的size却为1，此时a_position属性应该如何读取值
 const main = () => {
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl2')
@@ -70,11 +71,4 @@ const main = () => {
 }
 
 main();
-
-
-
-
-
-
-
-
+```
