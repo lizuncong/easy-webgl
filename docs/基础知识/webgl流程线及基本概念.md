@@ -4,7 +4,7 @@ GPU：图形处理器(Graphics Processing Unit)
 
 WebGL 的核心就是渲染管线
 
-![image](../../imgs/process_01.jpg)
+![image](../../easy-webgl/process_01.jpg)
 
 - 1.从总线进入 GPU：将 CPU 送来的数据总线，再从总线送到 GPU 里面进行处理
 - 2.从 GPU 进入帧缓冲存储器(或称显存)：将 GPU 芯片处理完的数据送到显存
