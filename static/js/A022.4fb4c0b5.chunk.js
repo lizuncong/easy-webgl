@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkWebGL=self.webpackChunkWebGL||[]).push([[424],{8016:(e,c,s)=>{s.r(c),s.d(c,{default:()=>t});s(5043);var n=s(8044),r=s(579);const t=function(){return(0,r.jsx)(n.A,{srcDoc:"## \u4ece\u6267\u884cJavaScript\u7a0b\u5e8f\u5230\u5728\u6d4f\u89c8\u5668\u4e2d\u663e\u793a\u7ed3\u679c\u7684\u8fc7\u7a0b\n"})}}}]);
-//# sourceMappingURL=A022.4fb4c0b5.chunk.js.map
