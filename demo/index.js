@@ -1,30 +1,36 @@
 const canvas = document.getElementById('webgl')
-// 记得获取的是webgl2上下文
-const gl = canvas.getContext('webgl2')
+const gl = canvas.getContext('webgl')
 
 const vertexShaderSource = `
-  attribute vec2 a_position;
-  void main() {
-    gl_Position = vec4(a_position, 0, 1);
-    gl_PointSize = 10.0;
-  }
-`
+    attribute vec4 a_Position;
+    void main() {
+        gl_Position = a_Position;
+        gl_PointSize = 10.0;
+    }
+`;
+
 const fragmentShaderSource = `
-  precision mediump float;
-  void main() {
-    gl_FragColor = vec4(1,0,0.5,1);
-  }
-`
+    precision mediump float;
+    void main(){
+        gl_FragColor = vec4(1,0,0,1.0);
+    }
+`;
 
-const program = initShaders(gl, vertexShaderSource, fragmentShaderSource)
-const positionLocation = gl.getAttribLocation(program, 'a_position')
+const program = initShaders(gl, vertexShaderSource, fragmentShaderSource);
+gl.useProgram(program);
+const a_Position = gl.getAttribLocation(program, "a_Position");
 
-gl.useProgram(program)
-gl.vertexAttrib2f(positionLocation, 0.0, 0.5)
 
-// 打开的是defaultVAO中的positionLocation属性，即默认的VAO的属性的状态。
-gl.enableVertexAttribArray(positionLocation)
+gl.clearColor(0, 0, 0, 1);
+gl.clear(gl.COLOR_BUFFER_BIT);
 
-var vao = gl.createVertexArray();
-gl.bindVertexArray(vao);
-gl.drawArrays(gl.POINTS, 0, 1)
+gl.vertexAttrib3f(a_Position, 0.5, 0.0, 0.0);
+gl.drawArrays(gl.POINTS, 0, 1);
+
+gl.vertexAttrib3f(a_Position, 0.3, 0.0, 0.0);
+gl.drawArrays(gl.POINTS, 0, 1);
+
+Promise.resolve().then((res) => {
+  gl.vertexAttrib3f(a_Position, 0.1, 0.0, 0.0);
+  gl.drawArrays(gl.POINTS, 0, 1);
+});
