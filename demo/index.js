@@ -31,17 +31,6 @@ const main = (image) => {
     const texCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
     const x = 1.0, y = 1.0;
-    // 假设WebGL纹理坐标的原点在左下角，那么纹理坐标应该如下：
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    //  0.0, y,
-    //  x, y,
-    //  0.0, 0.0,
-    //  x, y,
-    //  0.0,0.0,
-    //  x, 0
-    // ]), gl.STATIC_DRAW);
-
-    // WebGL纹理坐标的原点在左上角，因此我们应该按下面的顺序提供纹理坐标：
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
       0.0, 0.0,
       x, 0.0,
@@ -57,7 +46,7 @@ const main = (image) => {
     var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
   
-    // 设置参数，让我们可以绘制任何尺寸的图像
+    // // 设置参数，让我们可以绘制任何尺寸的图像
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -107,7 +96,8 @@ const main = (image) => {
   
   
   const image = new Image();
-  image.src = "./f.png";  // 必须在同一域名下
+  image.src = "./cat.jpeg";  // 必须在同一域名下
+
   image.onload = function () {
     main(image);
   }
