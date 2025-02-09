@@ -46,13 +46,33 @@ const main = (image) => {
     var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
   
-  
+    function isPowerOf2(value) {
+      return (value & (value - 1)) === 0;
+    }
+    
     // 将图像上传到纹理
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    // gl.generateMipmap(gl.TEXTURE_2D);
+    // 检查每个维度是否是 2 的幂
+    if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+      // 是 2 的幂，一般用纹理映射中的贴图
+      gl.generateMipmap(gl.TEXTURE_2D);
+      // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST); // 可以自由设置，也可以不设置
+    } else if(!isPowerOf2(image.width) && !isPowerOf2(image.height)){
+      // 尺寸都不是 2 的幂，关闭纹理映射贴图并设置水平和垂直方向的环绕模式为到gl.CLAMP_TO_EDGE
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); 
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // 关闭纹理映射贴图，只能取值gl.LINEAR或者gl.NEAREST
+    } else if(!isPowerOf2(image.width) && isPowerOf2(image.height)){
+      // 宽度不是 2 的幂，高度是，关闭纹理映射贴图并设置水平方向环绕模式为到gl.CLAMP_TO_EDGE
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // 水平方向环绕模式只能设置成gl.CLAMP_TO_EDGE
+      // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); // 垂直方向的环绕模式可以自由设置，也可以不设置
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // 关闭纹理映射贴图，只能取值gl.LINEAR或者gl.NEAREST
+    } else if(isPowerOf2(image.width) && !isPowerOf2(image.height)){
+      // 宽度是 2 的幂，高度不是，关闭纹理映射贴图并设置垂直方向环绕模式为到gl.CLAMP_TO_EDGE
+      // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // 水平方向的环绕模式可以自由设置，也可以不设置
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); // 垂直方向环绕模式只能设置成gl.CLAMP_TO_EDGE
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // 关闭纹理映射贴图，只能取值gl.LINEAR或者gl.NEAREST
+    }
 
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
@@ -99,8 +119,10 @@ const main = (image) => {
   
   
   const image = new Image();
-  image.src = "./cat.jpeg";  // 必须在同一域名下
-  // image.src = "./f.png";  // 必须在同一域名下
+  // image.src = "./cat.jpeg";  // 必须在同一域名下
+  // image.src = "./cat2.jpeg";  // 必须在同一域名下
+
+  image.src = "./f.png";  // 必须在同一域名下
 
   image.onload = function () {
     main(image);
