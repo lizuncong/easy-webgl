@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3694ae33.css",
-    "main.js": "/static/js/main.2fd07615.js",
+    "main.js": "/static/js/main.37a3a38d.js",
     "A000.js": "/static/js/A000.936388ca.chunk.js",
     "A010.js": "/static/js/A010.8ac4a7bd.chunk.js",
     "A011.js": "/static/js/A011.d6556a0e.chunk.js",
@@ -14,7 +14,7 @@
     "A032.js": "/static/js/A032.5043334f.chunk.js",
     "A033.js": "/static/js/A033.441234ec.chunk.js",
     "A034.js": "/static/js/A034.18f21972.chunk.js",
-    "A040.js": "/static/js/A040.a5ab20ce.chunk.js",
+    "A040.js": "/static/js/A040.e208448d.chunk.js",
     "A041.js": "/static/js/A041.2daa95b5.chunk.js",
     "A042.js": "/static/js/A042.0b9dc840.chunk.js",
     "../build/texture_07.png": "/../build/texture_07.png",
@@ -45,20 +45,26 @@
     "../build/size_07.webp": "/../build/size_07.webp",
     "../build/cat2.jpeg": "/../build/cat2.jpeg",
     "../build/size_02.webp": "/../build/size_02.webp",
+    "../build/coor_05.jpg": "/../build/coor_05.jpg",
+    "../build/coor_06.jpg": "/../build/coor_06.jpg",
     "../build/texture_06.jpg": "/../build/texture_06.jpg",
     "../build/size_03.webp": "/../build/size_03.webp",
     "../build/size_01.webp": "/../build/size_01.webp",
     "../build/texture_08.jpg": "/../build/texture_08.jpg",
+    "../build/coor_04.jpg": "/../build/coor_04.jpg",
     "../build/texture_04.jpg": "/../build/texture_04.jpg",
     "../build/uniform_08.webp": "/../build/uniform_08.webp",
+    "../build/coor_02.jpg": "/../build/coor_02.jpg",
     "../build/size_12.webp": "/../build/size_12.webp",
     "../build/size_08.webp": "/../build/size_08.webp",
     "../build/texture_09.jpg": "/../build/texture_09.jpg",
     "../build/ver_07.webp": "/../build/ver_07.webp",
+    "../build/coor_03.jpg": "/../build/coor_03.jpg",
     "../build/render_02.jpg": "/../build/render_02.jpg",
     "../build/texture_10.jpg": "/../build/texture_10.jpg",
     "../build/attri_04.jpg": "/../build/attri_04.jpg",
     "../build/size_06.webp": "/../build/size_06.webp",
+    "../build/coor_01.png": "/../build/coor_01.png",
     "../build/uniform_07.webp": "/../build/uniform_07.webp",
     "../build/uniform_09.webp": "/../build/uniform_09.webp",
     "../build/render_03.jpg": "/../build/render_03.jpg",
@@ -80,7 +86,7 @@
     "static/media/README.md": "/static/media/README.a90d2ce68d0b4b4bf930.md",
     "index.html": "/index.html",
     "main.3694ae33.css.map": "/static/css/main.3694ae33.css.map",
-    "main.2fd07615.js.map": "/static/js/main.2fd07615.js.map",
+    "main.37a3a38d.js.map": "/static/js/main.37a3a38d.js.map",
     "A000.936388ca.chunk.js.map": "/static/js/A000.936388ca.chunk.js.map",
     "A010.8ac4a7bd.chunk.js.map": "/static/js/A010.8ac4a7bd.chunk.js.map",
     "A011.d6556a0e.chunk.js.map": "/static/js/A011.d6556a0e.chunk.js.map",
@@ -93,12 +99,12 @@
     "A032.5043334f.chunk.js.map": "/static/js/A032.5043334f.chunk.js.map",
     "A033.441234ec.chunk.js.map": "/static/js/A033.441234ec.chunk.js.map",
     "A034.18f21972.chunk.js.map": "/static/js/A034.18f21972.chunk.js.map",
-    "A040.a5ab20ce.chunk.js.map": "/static/js/A040.a5ab20ce.chunk.js.map",
+    "A040.e208448d.chunk.js.map": "/static/js/A040.e208448d.chunk.js.map",
     "A041.2daa95b5.chunk.js.map": "/static/js/A041.2daa95b5.chunk.js.map",
     "A042.0b9dc840.chunk.js.map": "/static/js/A042.0b9dc840.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.3694ae33.css",
-    "static/js/main.2fd07615.js"
+    "static/js/main.37a3a38d.js"
   ]
 }
