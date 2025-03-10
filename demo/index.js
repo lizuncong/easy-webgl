@@ -1,5 +1,4 @@
-const main = (image) => {
-  console.log('image...', image.width, image.height)
+const main = () => {
   const canvas = document.getElementById('webgl')
   const gl = canvas.getContext('webgl2')
   const vertexShaderSource1 = `
@@ -31,17 +30,20 @@ const main = (image) => {
   // 给矩形提供纹理坐标
   const texCoordBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-  const x = 1.0, y = 1.0;
+  const x = 0.25, y = 0.25, textWidth = 0.5, textHeight = 0.5;
+  // const x = 0, y = 0, textWidth = 1.0, textHeight = 1.0;
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    0.0, 0.0,
-    x, 0.0,
-    0.0, y,
-    0.0, y,
-    x, 0.0,
-    x, y
+    x, y + textHeight,
+    x + textWidth, y + textHeight,
+    x, y,
+    x, y,
+    x + textWidth, y + textHeight,
+    x + textWidth, y
   ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(texCoordLocation);
+  gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-  const rectX = -0.5, rectY = 0.5, rectWidth = 0.5, rectHeight = 0.5
+  const rectX = 0.0, rectY = 0.5, rectWidth = 0.5, rectHeight = 0.5
   let verticesInfo = [
     rectX, rectY,
     rectX + rectWidth, rectY,
@@ -50,56 +52,66 @@ const main = (image) => {
     rectX + rectWidth, rectY,
     rectX + rectWidth, rectY - rectHeight,
   ]
-  gl.enableVertexAttribArray(texCoordLocation);
-  gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+ 
+  verticesInfo = new Float32Array(verticesInfo);
+
+  const vertexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, verticesInfo, gl.STATIC_DRAW);
+
+  gl.vertexAttribPointer(positionLocation1, 2, gl.FLOAT, false, 8, 0);
+
+  gl.enableVertexAttribArray(positionLocation1);
 
   // 创建纹理
   var texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  // 用 4x2 的像素填充纹理
+  // 用 4x4 的像素填充纹理
   const level = 0;
   const internalFormat = gl.RGBA;
   const width = 4;
-  const height = 2;
+  const height = 4;
   const border = 0;
   const format = gl.RGBA;
   const type = gl.UNSIGNED_BYTE;
   const data = new Uint8Array([
-    255, 0, 0, 255,
-    0, 255, 0, 255,
-    0, 0, 255, 255,
-    255, 255, 0, 255,
+    255, 0, 0, 255, // 红
+    0, 255, 0, 255, // 绿
+    0, 0, 255, 255, // 蓝
+    255, 255, 0, 255, // 黄
 
-    255, 0, 255, 255,
-    0, 255, 255, 255,
-    255, 255, 255, 255,
-    0, 0, 0, 255,
+    255, 0, 255, 255, // 品红色
+    0, 255, 255, 255, // 青色
+    105, 255, 105, 255,   // 青柠绿
+    0, 0, 0, 255, // 黑色
+
+
+    255, 165, 0, 255,    // 橙色
+    75, 32, 132, 255,    // 深紫色
+    255, 218, 0, 255,    // 金色
+    124, 252, 0,  255,   // 荧光绿
+
+    255, 20, 133, 255,      // 珊瑚色
+    255, 182, 193, 255,   // 淡粉红
+    138, 43, 238, 255,    // 魔法蓝
+    255, 255, 255, 255,     // 白色
   ]);
-  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border,
-    format, type, data);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    level,
+    internalFormat,
+    width,
+    height,
+    border,
+    format,
+    type,
+    data
+  );
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-
-  verticesInfo = new Float32Array(verticesInfo)
-
-  const vertexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
-  gl.bufferData(gl.ARRAY_BUFFER, verticesInfo, gl.STATIC_DRAW)
-
-
-  gl.vertexAttribPointer(
-    positionLocation1,
-    2,
-    gl.FLOAT,
-    false,
-    8,
-    0
-  );
-
 
 
   gl.clearColor(0, 0, 0, 0)
@@ -108,37 +120,38 @@ const main = (image) => {
 
   gl.useProgram(program1)
 
-  gl.enableVertexAttribArray(positionLocation1);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6)
 
 }
 
-
-const image = new Image();
-image.src = "./1.png";  // 必须在同一域名下
-image.onload = function () {
-  main(image);
-}
+main();
 
 
+// const image = new Image();
+// image.src = "./f.png";  
+// image.onload = function () {
+//   main(image);
+// }
 
-// 图片URL
-const imageUrl = 'https://example.com/image.jpg';
 
-// 使用fetch获取图片的Response
-fetch(imageUrl)
-.then(response => {
-  if (!response.ok) {
-    throw new Error('Network response was not ok ' + response.statusText);
-  }
-  return response.arrayBuffer(); // 转换响应为ArrayBuffer
-})
-.then(arrayBuffer => {
-  // arrayBuffer 包含了图片的二进制数据
-  console.log('图片的二进制数据:', new Uint8Array(arrayBuffer));
 
-})
-.catch(error => {
-  console.error('读取图片二进制数据时发生错误:', error);
-});
+// // 图片URL
+// const imageUrl = 'https://example.com/image.jpg';
+
+// // 使用fetch获取图片的Response
+// fetch(imageUrl)
+// .then(response => {
+//   if (!response.ok) {
+//     throw new Error('Network response was not ok ' + response.statusText);
+//   }
+//   return response.arrayBuffer(); // 转换响应为ArrayBuffer
+// })
+// .then(arrayBuffer => {
+//   // arrayBuffer 包含了图片的二进制数据
+//   console.log('图片的二进制数据:', new Uint8Array(arrayBuffer));
+
+// })
+// .catch(error => {
+//   console.error('读取图片二进制数据时发生错误:', error);
+// });
