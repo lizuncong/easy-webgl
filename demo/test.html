@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="colorCanvas"></canvas>
+<button onclick="downloadImage()">下载图片</button>
+
+<script>
+// 配置参数
+const canvas = document.getElementById('colorCanvas');
+const ctx = canvas.getContext('2d');
+const blockSize = 1; // 每个色块的大小
+const row = 4;
+canvas.width = canvas.height = blockSize * row; // 画布尺寸
+
+// 颜色数据解析
+const colors = [
+      [255, 20, 133, 255],      // 珊瑚色
+      [255, 182, 193, 255],   // 淡粉红
+      [138, 43, 238, 255],    // 魔法蓝
+      [255, 255, 255, 255],     // 白色
+
+      [255, 165, 0, 255],    // 橙色
+      [75, 32, 132, 255],    // 深紫色
+      [255, 218, 0, 255],    // 金色
+      [124, 252, 0,  255],   // 荧光绿
+
+
+      [255, 0, 255, 255], // 品红色
+      [0, 255, 255, 255], // 青色
+      [105, 255, 105, 255],   // 青柠绿
+      [0, 0, 0, 255], // 黑色
+
+      [255, 0, 0, 255], // 红
+      [0, 255, 0, 255], // 绿
+      [0, 0, 255, 255], // 蓝
+      [255, 255, 0, 255], // 黄
+  
+    ];
+
+// 绘制函数
+function drawColors() {
+  // 清空画布
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // 循环绘制每个颜色块
+  colors.forEach((color, index) => {
+    const x = (index % row) * blockSize;
+    const y = Math.floor(index / row) * blockSize;
+    
+    // 创建颜色对象
+    ctx.fillStyle = `rgba(${color.join(',')})`;
+    ctx.fillRect(x, y, blockSize , blockSize); 
+  });
+}
+
+// 下载图片功能
+function downloadImage() {
+  const link = document.createElement('a');
+  link.download = 'colorPattern.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// 初始化绘制
+drawColors();
+</script>
+
+<style>
+canvas {
+  /* margin: 20px; */
+}
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+}
+</style>
+</body>
+</html>
