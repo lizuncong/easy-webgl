@@ -1,6 +1,8 @@
 const main = (image) => {
   const canvas = document.getElementById('webgl')
-  const gl = canvas.getContext('webgl2')
+
+
+  const gl = canvas.getContext('webgl')
   const vertexShaderSource1 = `
     attribute vec2 a_texCoord;
     attribute vec2 a_position;
@@ -33,17 +35,17 @@ const main = (image) => {
   // const x = 0.25, y = 0.25, textWidth = 0.5, textHeight = 0.5;
   const x = 0, y = 0, textWidth = 1.0, textHeight = 1.0;
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    x, y,
-    x + textWidth, y,
     x, y + textHeight,
-    x, y + textHeight,
-    x + textWidth, y,
     x + textWidth, y + textHeight,
+    x, y,
+    x, y,
+    x + textWidth, y + textHeight,
+    x + textWidth, y
   ]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(texCoordLocation);
   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-  const rectX = 0.0, rectY = 0.5, rectWidth = 0.5, rectHeight = 0.5
+  const rectX = -1.0, rectY = 1.0, rectWidth = 2.0, rectHeight = 2.0
   let verticesInfo = [
     rectX, rectY,
     rectX + rectWidth, rectY,
@@ -66,8 +68,48 @@ const main = (image) => {
   // 创建纹理
   var texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
-   // 将图像上传到纹理
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+  // 用 4x4 的像素填充纹理
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const width = 3;
+  const height = 2;
+  const border = 0;
+  const format = gl.RGBA;
+  const type = gl.UNSIGNED_BYTE;
+  const data = new Uint8Array([
+    255, 0, 0, 255, // 红
+    0, 255, 0, 255, // 绿
+    0, 0, 255, 255, // 蓝
+    // 255, 255, 0, 255, // 黄
+
+    255, 0, 255, 255, // 品红色
+    0, 255, 255, 255, // 青色
+    105, 255, 105, 255,   // 青柠绿
+    // 0, 0, 0, 255, // 黑色
+
+
+    // 255, 165, 0, 255,    // 橙色
+    // 75, 32, 132, 255,    // 深紫色
+    // 255, 218, 0, 255,    // 金色
+    // 124, 252, 0,  255,   // 荧光绿
+
+    // 255, 20, 133, 255,      // 珊瑚色
+    // 255, 182, 193, 255,   // 淡粉红
+    // 138, 43, 238, 255,    // 魔法蓝
+    // 255, 255, 255, 255,     // 白色
+  ]);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    level,
+    internalFormat,
+    width,
+    height,
+    border,
+    format,
+    type,
+    data
+  );
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -85,28 +127,8 @@ const main = (image) => {
 
 }
 
-// // 图片URL
-const imageUrl = "./color.png"
+main()
 
-const image = new Image();
-image.src = imageUrl  
-image.onload = function () {
-  main(image);
-}
 
-const img = new Image();
-img.src = imageUrl;
 
-img.onload = () => {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = img.width;
-  canvas.height = img.height;
-  ctx.drawImage(img, 0, 0);
 
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-
-  console.log('rgba：', data)
-
-};
