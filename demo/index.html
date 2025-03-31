@@ -8,26 +8,43 @@
   <meta name="description" content="WebGL" />
   <title>WebGL</title>
   <style>
+    @import url("./webgl-tutorials.css");
+
     body {
       margin: 20px;
     }
+
     #webgl {
       width: 500px;
       height: 500px;
     }
+
     .container {
       font-size: 0;
       display: inline-block;
       /* border: 1px solid black; */
     }
+
+    #ui {
+      width: 200px;
+    }
   </style>
 </head>
 
 <body>
+  <div id="uiContainer">
+    <div id="ui">
+      <div id="x"></div>
+      <div id="y"></div>
+    </div>
+  </div>
   <div class="container">
     <canvas width="500" height="500" id="webgl">你的浏览器不支持canvas</canvas>
   </div>
+  <script src="./webgl-lessons-ui.js"></script>
+
   <script src="./initShaders.js"></script>
   <script src="./index.js"></script>
 </body>
+
 </html>
